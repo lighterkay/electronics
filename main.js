@@ -1,33 +1,30 @@
-// 🌍 Function to Fetch Weather by City Name
-async function fetchWeatherByCity() {
-    const apiKey = "c704715ed40a3d29fcfcc533f0c06b85"; // 🔴 Replace with your real API key
-    const city = document.getElementById("city-input").value;
-    const url = https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${apiKey};
+const API_KEY = "478fe7c2e6077e977b40469c9be08172"; 
 
+const weatherButton = document.getElementById('weather-button');
+
+weatherButton.addEventListener('click', async event => {
+    const searchTerm = document.getElementById('city-input').value;
+    const weatherCity = document.getElementById('weather-city');
+    const weatherDescription = document.getElementById('weather-text')
+
+    const url = `https://api.openweathermap.org/data/2.5/weather?q=${searchTerm}&appid=${API_KEY}`
     try {
         const response = await fetch(url);
         const data = await response.json();
+        console.log(data);
 
-        if (data.cod === 200) {
-            // Extract weather details
-            const temp = Math.round(data.main.temp);
-            const condition = data.weather[0].description;
-            const iconCode = data.weather[0].icon;
-            const iconUrl = https://openweathermap.org/img/wn/${iconCode}@2x.png;
+        if (data.weather) {
+            weatherDescription.innerHTML = `${data.weather[0].description}`
+            weatherCity.innerHTML = `${data.name}`
 
-            // Update HTML elements
-            document.getElementById("weather-city").innerText = Weather in ${data.name};
-            document.getElementById("weather-text").innerText = ${temp}°C - ${condition};
+            const iconUrl = `https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`;
+
             document.getElementById("weather-icon").src = iconUrl;
         } else {
-            document.getElementById("weather-text").innerText = "City not found. Try again.";
-            document.getElementById("weather-icon").src = "";
+            alert(`No weather found. Please try a different search.`);
         }
     } catch (error) {
-        console.error("Weather fetch failed:", error);
-        document.getElementById("weather-text").innerText = "Weather unavailable.";
+        console.error("Error fetching weather:", error);
     }
-}
+});
 
-// 🟢 Attach event to search button
-document.getElementById("weather-button").addEventListener("click", fetchWeatherByCity);
